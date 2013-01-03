@@ -1,9 +1,66 @@
+/**
+ * Copyright (c) MuleSoft, Inc.  All rights reserved.  http://www.mulesoft.com
+ *
+ * The software in this package is published under the terms of the CPAL v1.0
+ * license, a copy of which has been included with this distribution in the
+ * LICENSE.txt file.
+ */
+
+import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.mozilla.javascript.Function;
+import org.mule.tools.rhinodo.api.ConsoleFactory;
+import org.mule.tools.rhinodo.api.NodeModuleFactory;
+import org.mule.tools.rhinodo.impl.Rhinodo;
+import org.mule.tools.rhinodo.impl.RhinodoBuilder;
+import org.mule.tools.rhinodo.impl.console.SystemOutConsole;
+import org.mule.tools.rhinodo.impl.console.WrappingConsoleFactory;
+
+import java.io.File;
+import java.util.Map;
+
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 public class BrunchTest {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
+
     @Test
     public void testRun() throws Exception {
-        Brunch brunch = new Brunch();
-        brunch.run();
+        File rhinodoDestDir = folder.newFolder(".rhinodo");
+        File userDir = folder.newFolder("userDir");
+        RhinodoBuilder rhinodoBuilder = mock(RhinodoBuilder.class);
+        Rhinodo rhinodo = mock(Rhinodo.class);
+
+        when(rhinodoBuilder.destDir(any(File.class))).thenReturn(rhinodoBuilder);
+        when(rhinodoBuilder.moduleFactory(any(NodeModuleFactory.class))).thenReturn(rhinodoBuilder);
+        when(rhinodoBuilder.consoleFactory(any(ConsoleFactory.class))).thenReturn(rhinodoBuilder);
+        when(rhinodoBuilder.env(any(Map.class))).thenReturn(rhinodoBuilder);
+        when(rhinodoBuilder.build(any(Function.class))).thenReturn(rhinodo);
+
+        WrappingConsoleFactory wrappingConsoleFactory = new WrappingConsoleFactory(new SystemOutConsole());
+        new Brunch(rhinodoBuilder, wrappingConsoleFactory,rhinodoDestDir, userDir, true);
+
+        verify(rhinodoBuilder, times(1)).destDir(rhinodoDestDir);
+        verify(rhinodoBuilder, times(1)).consoleFactory(wrappingConsoleFactory);
+        verify(rhinodoBuilder, times(1)).build(any(Function.class));
+        verify(rhinodoBuilder, times(1)).env(any(Map.class));
+        verify(rhinodoBuilder, times(1)).moduleFactory(any(NodeModuleFactory.class));
+        verifyNoMoreInteractions(rhinodoBuilder);
+    }
+
+    @Test
+    public void testITBrunchRun() throws Exception {
+        String userHome = System.getProperty("user.home");
+        File rhinodoDestDir = new File(userHome, ".rhinodo");
+        File userDir = new File(System.getenv().get("PATH_TO_WORKSPACE"));
+
+        new Brunch(rhinodoDestDir, userDir, true);
+
     }
 }
