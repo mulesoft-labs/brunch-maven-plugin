@@ -21,7 +21,6 @@ import org.mule.tools.rhinodo.impl.console.WrappingConsoleProvider;
 import java.io.File;
 import java.util.Map;
 
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -62,6 +61,5 @@ public class BrunchTest {
         File userDir = new File(System.getenv().get("PATH_TO_WORKSPACE"));
 
         new Brunch(rhinodoDestDir, userDir, true);
-
     }
 }
