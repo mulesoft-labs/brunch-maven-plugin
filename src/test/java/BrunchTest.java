@@ -19,6 +19,7 @@ import org.mule.tools.rhinodo.impl.console.SystemOutConsole;
 import org.mule.tools.rhinodo.impl.console.WrappingConsoleProvider;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.mockito.Matchers.any;
@@ -43,7 +44,7 @@ public class BrunchTest {
         when(rhinodoBuilder.build(any(Function.class))).thenReturn(rhinodo);
 
         WrappingConsoleProvider wrappingConsoleFactory = new WrappingConsoleProvider(new SystemOutConsole());
-        new Brunch(rhinodoBuilder, wrappingConsoleFactory,rhinodoDestDir, userDir, true);
+        new Brunch(rhinodoBuilder, wrappingConsoleFactory,rhinodoDestDir, userDir, new HashMap<String, String>(), false);
 
         verify(rhinodoBuilder, times(1)).destDir(rhinodoDestDir);
         verify(rhinodoBuilder, times(1)).consoleFactory(wrappingConsoleFactory);
@@ -60,6 +61,6 @@ public class BrunchTest {
         File rhinodoDestDir = new File(userHome, ".rhinodo");
         File userDir = new File(System.getenv().get("PATH_TO_WORKSPACE"));
 
-        new Brunch(rhinodoDestDir, userDir, true);
+        new Brunch(rhinodoDestDir, userDir);
     }
 }

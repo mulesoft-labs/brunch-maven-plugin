@@ -19,7 +19,11 @@
                             <goal>build</goal>
                         </goals>
                         <configuration>
+                            <mimify>true</mimify>
                             <sourceDirectory>${basedir}/brunch</sourceDirectory>
+                            <env>
+                                <API_HOST>${api.host}</API_HOST>
+                            </env>
                         </configuration>
                     </execution>
                 </executions>

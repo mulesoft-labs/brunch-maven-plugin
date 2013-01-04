@@ -14,29 +14,26 @@ import org.mule.tools.rhinodo.impl.console.SystemOutConsole;
 import org.mule.tools.rhinodo.impl.console.WrappingConsoleProvider;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 
 public class Brunch {
 
-    public Brunch(final File rhinodoDestDir, final File userDir, final boolean debug) {
-        this(new WrappingConsoleProvider(new SystemOutConsole()), rhinodoDestDir, userDir, debug);
+    public Brunch(final File rhinodoDestDir, final File userDir) {
+        this(new WrappingConsoleProvider(new SystemOutConsole()), rhinodoDestDir, userDir, System.getenv(), false);
     }
 
     public Brunch(WrappingConsoleProvider wrappingConsoleFactory,
-                  final File rhinodoDestDir, final File userDir, final boolean debug) {
-        this(Rhinodo.create(), wrappingConsoleFactory, rhinodoDestDir, userDir, debug);
+                  final File rhinodoDestDir, final File userDir, final Map<String,String> env, final boolean minify) {
+        this(Rhinodo.create(), wrappingConsoleFactory, rhinodoDestDir, userDir, env, minify);
     }
 
     public Brunch(RhinodoBuilder rhinodoBuilder, WrappingConsoleProvider wrappingConsoleFactory,
-                  final File rhinodoDestDir, final File userDir, final boolean debug) {
+                  final File rhinodoDestDir, final File userDir, final Map<String,String> env, final boolean minify) {
 
         String destDirString = rhinodoDestDir.toString();
         rhinodoDestDir.mkdirs();
 
-        Map<String,String> env = new HashMap<String, String>(System.getenv());
-
-        if ( debug ) {
+        if ( !env.containsKey("BRUNCH_DEBUG") ) {
             env.put("BRUNCH_DEBUG", "*");
         }
 
@@ -54,11 +51,11 @@ public class Brunch {
                 .build(new BaseFunction() {
                     @Override
                     public Object call(Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
-//                        ScriptableObject.callMethod(scope, "strikeThePose", new Object[0]);
                         Scriptable brunch = (Scriptable) ScriptableObject.callMethod(cx, scope, "require",
                                 new Object[]{Context.javaToJS("brunch", scope)});
 
                         Scriptable options = cx.newObject(scope);
+                        ScriptableObject.putProperty(options, "minify", minify);
                         System.setProperty("user.dir", userDir.getAbsolutePath());
 
                         ScriptRuntime.doTopCall(ScriptableObject.getTypedProperty(brunch, "build", Function.class),

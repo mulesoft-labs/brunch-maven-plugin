@@ -13,6 +13,8 @@ import org.mule.tools.rhinodo.impl.console.WrappingConsoleProvider;
 import org.mule.tools.rhinodo.maven.MavenConsole;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Goal that offers Brunch support in Maven builds.
@@ -29,6 +31,20 @@ public class BuildMojo extends AbstractJavascriptMojo {
      */
     protected File sourceDirectory;
 
+    /**
+     * Whether the minify should take place or not.
+     *
+     * @parameter expression="${brunch.minify}"
+     */
+    protected boolean minify;
+
+    /**
+     * Additional Environment variables to send to Brunch.
+     *
+     * @parameter expression="${brunch.env}"
+     */
+    protected Map env;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         final Log log = getLog();
@@ -40,8 +56,11 @@ public class BuildMojo extends AbstractJavascriptMojo {
             return;
         }
 
+        Map<String,String> myEnv = new HashMap<String, String>(System.getenv());
+        myEnv.putAll(env);
+
         new Brunch(new WrappingConsoleProvider(MavenConsole.fromMavenLog(log)), getJavascriptFilesDirectory(),
-                sourceDirectory, true);
+                sourceDirectory, myEnv, minify);
 
     }
 }
