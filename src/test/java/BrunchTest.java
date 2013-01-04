@@ -11,12 +11,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mozilla.javascript.Function;
-import org.mule.tools.rhinodo.api.ConsoleFactory;
-import org.mule.tools.rhinodo.api.NodeModuleFactory;
+import org.mule.tools.rhinodo.api.ConsoleProvider;
+import org.mule.tools.rhinodo.api.NodeModuleProvider;
 import org.mule.tools.rhinodo.impl.Rhinodo;
 import org.mule.tools.rhinodo.impl.RhinodoBuilder;
 import org.mule.tools.rhinodo.impl.console.SystemOutConsole;
-import org.mule.tools.rhinodo.impl.console.WrappingConsoleFactory;
+import org.mule.tools.rhinodo.impl.console.WrappingConsoleProvider;
 
 import java.io.File;
 import java.util.Map;
@@ -38,23 +38,24 @@ public class BrunchTest {
         Rhinodo rhinodo = mock(Rhinodo.class);
 
         when(rhinodoBuilder.destDir(any(File.class))).thenReturn(rhinodoBuilder);
-        when(rhinodoBuilder.moduleFactory(any(NodeModuleFactory.class))).thenReturn(rhinodoBuilder);
-        when(rhinodoBuilder.consoleFactory(any(ConsoleFactory.class))).thenReturn(rhinodoBuilder);
+        when(rhinodoBuilder.moduleFactory(any(NodeModuleProvider.class))).thenReturn(rhinodoBuilder);
+        when(rhinodoBuilder.consoleFactory(any(ConsoleProvider.class))).thenReturn(rhinodoBuilder);
         when(rhinodoBuilder.env(any(Map.class))).thenReturn(rhinodoBuilder);
         when(rhinodoBuilder.build(any(Function.class))).thenReturn(rhinodo);
 
-        WrappingConsoleFactory wrappingConsoleFactory = new WrappingConsoleFactory(new SystemOutConsole());
+        WrappingConsoleProvider wrappingConsoleFactory = new WrappingConsoleProvider(new SystemOutConsole());
         new Brunch(rhinodoBuilder, wrappingConsoleFactory,rhinodoDestDir, userDir, true);
 
         verify(rhinodoBuilder, times(1)).destDir(rhinodoDestDir);
         verify(rhinodoBuilder, times(1)).consoleFactory(wrappingConsoleFactory);
         verify(rhinodoBuilder, times(1)).build(any(Function.class));
         verify(rhinodoBuilder, times(1)).env(any(Map.class));
-        verify(rhinodoBuilder, times(1)).moduleFactory(any(NodeModuleFactory.class));
+        verify(rhinodoBuilder, times(1)).moduleFactory(any(NodeModuleProvider.class));
         verifyNoMoreInteractions(rhinodoBuilder);
     }
 
     @Test
+    @Ignore
     public void testITBrunchRun() throws Exception {
         String userHome = System.getProperty("user.home");
         File rhinodoDestDir = new File(userHome, ".rhinodo");

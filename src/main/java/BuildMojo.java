@@ -9,7 +9,7 @@
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
-import org.mule.tools.rhinodo.impl.console.WrappingConsoleFactory;
+import org.mule.tools.rhinodo.impl.console.WrappingConsoleProvider;
 import org.mule.tools.rhinodo.maven.MavenConsole;
 
 import java.io.File;
@@ -47,7 +47,7 @@ public class BuildMojo extends AbstractJavascriptMojo {
             return;
         }
 
-        new Brunch(new WrappingConsoleFactory(MavenConsole.fromMavenLog(log)), getJavascriptFilesDirectory(),
+        new Brunch(new WrappingConsoleProvider(MavenConsole.fromMavenLog(log)), getJavascriptFilesDirectory(),
                 sourceDirectory, debug);
 
     }

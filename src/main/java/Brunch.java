@@ -7,11 +7,11 @@
  */
 
 import org.mozilla.javascript.*;
-import org.mule.tools.rhinodo.impl.NodeModuleFactoryImpl;
+import org.mule.tools.rhinodo.impl.NodeModuleProviderImpl;
 import org.mule.tools.rhinodo.impl.Rhinodo;
 import org.mule.tools.rhinodo.impl.RhinodoBuilder;
 import org.mule.tools.rhinodo.impl.console.SystemOutConsole;
-import org.mule.tools.rhinodo.impl.console.WrappingConsoleFactory;
+import org.mule.tools.rhinodo.impl.console.WrappingConsoleProvider;
 
 import java.io.File;
 import java.util.HashMap;
@@ -20,15 +20,15 @@ import java.util.Map;
 public class Brunch {
 
     public Brunch(final File rhinodoDestDir, final File userDir, final boolean debug) {
-        this(new WrappingConsoleFactory(new SystemOutConsole()), rhinodoDestDir, userDir, debug);
+        this(new WrappingConsoleProvider(new SystemOutConsole()), rhinodoDestDir, userDir, debug);
     }
 
-    public Brunch(WrappingConsoleFactory wrappingConsoleFactory,
+    public Brunch(WrappingConsoleProvider wrappingConsoleFactory,
                   final File rhinodoDestDir, final File userDir, final boolean debug) {
         this(Rhinodo.create(), wrappingConsoleFactory, rhinodoDestDir, userDir, debug);
     }
 
-    public Brunch(RhinodoBuilder rhinodoBuilder, WrappingConsoleFactory wrappingConsoleFactory,
+    public Brunch(RhinodoBuilder rhinodoBuilder, WrappingConsoleProvider wrappingConsoleFactory,
                   final File rhinodoDestDir, final File userDir, final boolean debug) {
 
         String destDirString = rhinodoDestDir.toString();
@@ -40,7 +40,9 @@ public class Brunch {
             env.put("BRUNCH_DEBUG", "*");
         }
 
-        rhinodoBuilder.destDir(rhinodoDestDir).moduleFactory(new NodeModuleFactoryImpl(
+        rhinodoBuilder
+                .destDir(rhinodoDestDir)
+                .moduleFactory(new NodeModuleProviderImpl(
                 this.getClass(), destDirString, "ansi-color", "argumentum", "async", "brunch",
                 "bytes", "chokidar", "coffee-script", "commander", "connect", "cookie", "crc", "date-utils",
                 "debug", "diff", "express", "fast-list", "forEachAsync", "formidable", "fresh", "graceful-fs",
