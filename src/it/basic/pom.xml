@@ -19,7 +19,6 @@
                             <goal>build</goal>
                         </goals>
                         <configuration>
-                            <debug>true</debug>
                             <sourceDirectory>${basedir}/brunch</sourceDirectory>
                         </configuration>
                     </execution>

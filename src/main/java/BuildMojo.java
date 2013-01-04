@@ -29,13 +29,6 @@ public class BuildMojo extends AbstractJavascriptMojo {
      */
     protected File sourceDirectory;
 
-    /**
-     * Whether to show verbose messages or not.
-     *
-     * @parameter expression="${brunch.debug}"
-     */
-    protected boolean debug;
-
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         final Log log = getLog();
@@ -48,7 +41,7 @@ public class BuildMojo extends AbstractJavascriptMojo {
         }
 
         new Brunch(new WrappingConsoleProvider(MavenConsole.fromMavenLog(log)), getJavascriptFilesDirectory(),
-                sourceDirectory, debug);
+                sourceDirectory, true);
 
     }
 }
