@@ -53,6 +53,7 @@
                         <configuration>
                             <outputDirectory>${basedir}/src/main/resources/META-INF/node_modules</outputDirectory>
                             <packages>
+                                <package>chokidar:0.5.1</package>
                                 <package>brunch:1.4.4</package>
                             </packages>
                         </configuration>
