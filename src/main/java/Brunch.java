@@ -37,15 +37,16 @@ public class Brunch {
             env.put("BRUNCH_DEBUG", "*");
         }
 
+        NodeModuleProviderImpl nodeModuleProvider;
+        try {
+            nodeModuleProvider = NodeModuleProviderImpl.fromJar(this.getClass(), destDirString);
+        } catch (Exception e) {
+            nodeModuleProvider = new NodeModuleProviderImpl(this.getClass(), destDirString);
+        }
+
         rhinodoBuilder
                 .destDir(rhinodoDestDir)
-                .moduleFactory(new NodeModuleProviderImpl(
-                this.getClass(), destDirString, "ansi-color", "argumentum", "async", "brunch",
-                "bytes", "chokidar", "coffee-script", "commander", "connect", "cookie", "crc", "date-utils",
-                "debug", "diff", "express", "fast-list", "forEachAsync", "formidable", "fresh", "graceful-fs",
-                "growl", "handlebars", "inflection", "jade", "methods", "mime", "mkdirp", "mocha", "ncp",
-                "optimist", "pause", "qs", "range-parser", "rimraf", "send", "sequence", "uglify-js", "walk",
-                "wordwrap"))
+                .moduleFactory(nodeModuleProvider)
                 .consoleFactory(wrappingConsoleFactory)
                 .env(env)
                 .build(new BaseFunction() {
