@@ -33,6 +33,8 @@ public class Brunch {
         String destDirString = rhinodoDestDir.toString();
         rhinodoDestDir.mkdirs();
 
+        env.put("RHINODO_IGNORE_NOT_IMPLEMENTED_EXTENSIONS", "true");
+
         if ( !env.containsKey("BRUNCH_DEBUG") ) {
             env.put("BRUNCH_DEBUG", "*");
         }
